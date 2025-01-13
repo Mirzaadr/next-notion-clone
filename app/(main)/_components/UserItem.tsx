@@ -50,13 +50,13 @@ const UserItem = () => {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <SignoutButton>
-            <Button variant="ghost">
+        <SignoutButton>
+          <DropdownMenuItem className="p-0">
+            <Button variant="ghost" className="w-full justify-start">
               Logout
             </Button>
-          </SignoutButton>
-        </DropdownMenuItem>
+          </DropdownMenuItem>
+        </SignoutButton>
       </DropdownMenuContent>
     </DropdownMenu>
   )
