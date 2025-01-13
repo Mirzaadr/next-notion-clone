@@ -1,17 +1,18 @@
 "use client"
 import Spinner from "@/components/Spinner";
-import { redirect } from "next/navigation";
 import Navigation from "./_components/Navigation";
 import { useEffect, useState } from "react";
+import { useRequireUser } from "@/lib/hooks/requireUser";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { isLoading } = useRequireUser()
+  
+  // const isLoading = session.status === "loading";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  const isLoading = false;
-  const isLoggedIn = true;
 
   if (isLoading || !mounted) {
     return (
@@ -19,10 +20,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Spinner size="lg"/>
       </div>
     )
-  }
-
-  if (!isLoggedIn) {
-    return redirect("/");
   }
 
   return (

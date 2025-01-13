@@ -2,17 +2,12 @@
 import React from 'react'
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-// import { useCurrentUser } from '@/hooks/useCurrentUser';
 import LogoutButton from '@/components/auth/SignoutButton';
-import { LogOutIcon, User, UserCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import { LogOutIcon, User2 } from 'lucide-react';
+import { useRequireUser } from '@/lib/hooks/requireUser';
 
-type Props = {
-  label?: string;
-};
-
-const UserButton = (props: Props) => {
-  // const user = useCurrentUser();
+const UserButton = () => {
+  const { user } = useRequireUser(false);
 
   return (
     <>
@@ -20,7 +15,8 @@ const UserButton = (props: Props) => {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarFallback >
-              <User />
+              <AvatarImage src={user?.image || ""}/>
+              <User2 />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

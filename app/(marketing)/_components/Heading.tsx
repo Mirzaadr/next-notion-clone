@@ -2,12 +2,13 @@
 import SigninButton from "@/components/auth/SigninButton";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
+import { useRequireUser } from "@/lib/hooks/requireUser";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const Heading = () => {
-  const isLoggedIn = false;
-  const isLoading = false;
+  const { isLoading, isAuthenticated: isLoggedIn} = useRequireUser(false)
+
   return (
     <div className='max-w-3xl space-y-4'>
       <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
@@ -32,7 +33,7 @@ const Heading = () => {
         </Button>
       )}
       {!isLoggedIn && !isLoading && (
-        <SigninButton className="mt-6">
+        <SigninButton className="mt-6" asChild>
           <Button>
             Get Anotion Free
             <ArrowRight className="size-4 ml-2"/>

@@ -8,11 +8,13 @@ import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import UserButton from "@/components/auth/UserButton";
+import SigninButton from "@/components/auth/SigninButton";
+import { useRequireUser } from "@/lib/hooks/requireUser";
 
 const Navbar = () => {
   const scrolled = useScrollTop();
-  const isLoggedIn = false;
-  const isLoading = false;
+  const { isLoading, isAuthenticated: isLoggedIn } = useRequireUser(false);
+
   return (
     <div
       className={cn(
@@ -27,12 +29,16 @@ const Navbar = () => {
         )}
         {!isLoggedIn && !isLoading && (
           <>
+          <SigninButton asChild>
             <Button variant="ghost" size="sm">
               Log In
             </Button>
+          </SigninButton>
+          <SigninButton asChild>
             <Button size="sm">
               Get Anotion Free
             </Button>
+          </SigninButton>
           </>
         )}
         {isLoggedIn && !isLoading && (
