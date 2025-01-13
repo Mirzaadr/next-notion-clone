@@ -23,6 +23,7 @@ const Social = ({
   const onClick = (provider: "google" | "github") => {
     signIn(provider, {
       callBackUrl: callbackUrl || "/",
+      redirectTo: "/documents"
     })
   }
   if (!isGithubActive && !isGoogleActive) {
