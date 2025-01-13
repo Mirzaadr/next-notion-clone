@@ -9,7 +9,7 @@ type SigninButtonProps = {
   children: React.ReactNode;
   mode?: "modal" | "redirect";
   asChild?: boolean;
-  className?: React.HTMLProps<HTMLElement>["className"];
+  className?: React.HTMLProps<HTMLDivElement>["className"];
   signInHref?: string;
 }
 
