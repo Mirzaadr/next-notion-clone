@@ -1,19 +1,25 @@
 "use client"
 import Spinner from "@/components/Spinner";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, MenuIcon, Plus, PlusCircle, Search, Settings } from "lucide-react";
+import { ChevronLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ComponentRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from 'usehooks-ts';
 import UserItem from "./UserItem";
 import { createDocument } from "@/lib/data/documents";
 import { useRequireUser } from "@/lib/hooks/requireUser";
-import { Document } from "@prisma/client";
 import Item from "./Item";
 import { toast } from "sonner";
 import { DocumentList } from "./DocumentList";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/components/providers/QueryProviders";
+
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+ } from "@/components/ui/popover";
+import TrashBox from "./TrashBox";
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -90,6 +96,7 @@ const Navigation = () => {
       setTimeout(() => setIsResetting(false), 300);
     }
   };
+
   const collapse = () => {
     if(sidebarRef.current && navbarRef.current) {
       setIsCollapsed(true);
@@ -158,6 +165,14 @@ const Navigation = () => {
             label="Add a page"
             icon={Plus}
           />
+          <Popover>
+            <PopoverTrigger className="w-full mt-4">
+              <Item label="Trash" icon={Trash}/>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-72" side={isMobile ? "bottom" : "right"}>
+              <TrashBox />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div onMouseDown={handleMouseDown} onClick={resetWidth} className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0" />
