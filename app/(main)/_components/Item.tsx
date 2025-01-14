@@ -20,7 +20,7 @@ interface ItemProps {
   level?: number;
   onExpand?: () => void;
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
   icon: LucideIcon;
 }
 
@@ -48,7 +48,7 @@ export const Item = ({
       title?: string;
     }) => createDocument({ parentId, title }),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["documents" + (id ?? "")] }),
+      queryClient.invalidateQueries({ queryKey: ["documents", id] }),
   });
   const archive = useMutation({
     mutationFn: (id: string) => archiveDocument({ documentId: id}),

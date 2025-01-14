@@ -34,7 +34,7 @@ export const DocumentList = ({
 
   // get documents
   const { data: documents } = useQuery({
-    queryKey: ['documents' + (parentDocumentId ?? "")],
+    queryKey: ['documents', parentDocumentId],
     queryFn: async () => {
       const response = await getSidebar({
         parentId: parentDocumentId
@@ -61,8 +61,6 @@ export const DocumentList = ({
       </>
     )
   }
-
-  console.log(documents);
   
   return (
     <>
