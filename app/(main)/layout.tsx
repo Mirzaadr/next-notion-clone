@@ -8,7 +8,6 @@ import { ReactQueryProvider } from "@/components/providers/QueryProviders";
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { isLoading } = useRequireUser()
   
-  // const isLoading = session.status === "loading";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
