@@ -1,21 +1,34 @@
 "use client"
 import Spinner from "@/components/Spinner";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, MenuIcon } from "lucide-react";
+import { ChevronLeft, MenuIcon, Plus, PlusCircle, Search, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ComponentRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from 'usehooks-ts';
 import UserItem from "./UserItem";
+import { createDocument } from "@/lib/data/documents";
+import { useRequireUser } from "@/lib/hooks/requireUser";
+import { Document } from "@prisma/client";
+import Item from "./Item";
+import { toast } from "sonner";
+import { DocumentList } from "./DocumentList";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/components/providers/QueryProviders";
 
 const Navigation = () => {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { user } = useRequireUser(false);
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ComponentRef<"aside">>(null);
   const navbarRef = useRef<ComponentRef<"div">>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
+  const addMutation = useMutation({
+      mutationFn: (title?: string) => createDocument({ title }),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
+    });
 
   useEffect(() => {
     if (isMobile) {
@@ -88,6 +101,16 @@ const Navigation = () => {
       setTimeout(() => setIsResetting(false), 300);
     }
   };
+
+  const handleCreate = () => {
+    const promise = addMutation.mutateAsync("Untitled");
+
+    toast.promise(promise, {
+      loading: "Creating new note...",
+      success: "New note created",
+      error: "Failed to create a new note."
+    });
+  }
   
   return (
     <>
@@ -111,9 +134,30 @@ const Navigation = () => {
         </div>
         <div>
           <UserItem />
+          <Item 
+            label="Search"
+            onClick={() => {}}
+            isSearch
+            icon={Search}
+          />
+          <Item 
+            label="Settings"
+            onClick={() => {}}
+            icon={Settings}
+          />
+          <Item 
+            onClick={handleCreate}
+            label="New Page"
+            icon={PlusCircle}
+          />
         </div>
         <div className="mt-4">
-          <p>Documents</p>
+          <DocumentList  />
+          <Item
+            onClick={handleCreate}
+            label="Add a page"
+            icon={Plus}
+          />
         </div>
 
         <div onMouseDown={handleMouseDown} onClick={resetWidth} className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0" />
