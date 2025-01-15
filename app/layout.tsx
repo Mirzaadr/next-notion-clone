@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/theme-providers";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
+import ModalProvider from "@/components/providers/ModalProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,7 +54,8 @@ export default async function RootLayout({
             storageKey="anotion-theme-2"
           >
             {children}
-            <Toaster />
+            <Toaster position="bottom-center"/>
+            <ModalProvider />
           </ThemeProvider>
         </SessionProvider>
       </body>
