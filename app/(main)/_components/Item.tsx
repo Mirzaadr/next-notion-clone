@@ -53,7 +53,10 @@ export const Item = ({
   const archive = useMutation({
     mutationFn: (id: string) => archiveDocument({ documentId: id}),
     onSuccess: () => 
-      queryClient.invalidateQueries({ queryKey: ["documents"] }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["documents"] }),
+        queryClient.invalidateQueries({ queryKey: ["document", id] }),
+      ]),
   });
 
   const handleExpand = (

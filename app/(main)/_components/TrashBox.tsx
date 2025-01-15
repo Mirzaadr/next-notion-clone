@@ -30,6 +30,7 @@ const TrashBox = () => {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["trash"] }),
         queryClient.invalidateQueries({ queryKey: ["documents"] }),
+        queryClient.invalidateQueries({ queryKey: ["document"] }),
       ]),
   });
   const remove = useMutation({
@@ -52,9 +53,7 @@ const TrashBox = () => {
     documentId: string
   ) => {
     event.stopPropagation();
-    const promise = restore.mutateAsync(documentId).then((res) => {
-      queryClient.invalidateQueries({ queryKey: ["documents", documentId] });
-    });
+    const promise = restore.mutateAsync(documentId);
 
     toast.promise(promise, {
       loading: "Restoring note...",

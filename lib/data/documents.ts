@@ -243,3 +243,81 @@ export const getSearch = async () => {
     return { success: false, data: null };
   }
 };
+
+export const getDocumentById = async ({
+  documentId,
+}: {
+  documentId: string;
+}) => {
+  const session = await auth();
+
+  // const userId = session.user.id;
+  try {
+    const document = await db.document.findUnique({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      throw new Error("Not Found");
+    }
+
+    if (document.isPublished && !document.isArchived) {
+      return { success: true, data: document };
+    }
+
+    if (!session || !session.user?.id) {
+      throw new Error("Not Authorized");
+    }
+
+    const userId = session.user.id;
+
+    if (document.userId !== userId) {
+      throw new Error("Not Authorized");
+    }
+
+    return { success: true, data: document };
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    return { success: false, data: null };
+  }
+};
+
+export const updateDocument = async (args: {
+  id: string;
+  title?: string;
+  content?: string;
+  coverImage?: string;
+  icon?: string;
+  isPublished?: boolean;
+}) => {
+  const { id, ...rest } = args;
+  const session = await auth();
+  try {
+    if (!session || !session.user?.id) {
+      throw new Error("Unauthenticated");
+    }
+    const userId = session.user.id;
+
+    const existingDoc = await db.document.findUnique({
+      where: { id },
+    });
+
+    if (!existingDoc) {
+      throw new Error("Not Found");
+    }
+
+    if (existingDoc.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const document = await db.document.update({
+      where: { id },
+      data: { ...rest },
+    });
+
+    return { success: true, data: document };
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    return { success: false, data: null };
+  }
+};
