@@ -224,3 +224,22 @@ export const removeDocument = async ({
     return { success: false };
   }
 };
+
+export const getSearch = async () => {
+  const session = await auth();
+
+  if (!session || !session.user?.id) {
+    return { success: false, data: null };
+  }
+  const userId = session.user.id;
+  try {
+    const data = await db.document.findMany({
+      where: { userId, isArchived: false },
+      orderBy: { createdAt: "desc" },
+    });
+    return { success: true, data };
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    return { success: false, data: null };
+  }
+};

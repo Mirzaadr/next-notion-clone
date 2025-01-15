@@ -24,7 +24,7 @@ import TrashBox from "./TrashBox";
 const Navigation = () => {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { user } = useRequireUser(false);
+  const search = useSearch();
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ComponentRef<"aside">>(null);
@@ -143,7 +143,7 @@ const Navigation = () => {
           <UserItem />
           <Item 
             label="Search"
-            onClick={() => {}}
+            onClick={search.onOpen}
             isSearch
             icon={Search}
           />

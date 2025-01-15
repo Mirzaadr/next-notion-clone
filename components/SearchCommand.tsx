@@ -1,0 +1,90 @@
+"use client"
+import { useEffect, useState } from "react";
+import { File } from "lucide-react";
+import { useRequireUser } from "@/lib/hooks/requireUser";
+import { useRouter } from "next/navigation";
+import { useSearch } from "@/lib/hooks/useSearch";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { useQuery } from "@tanstack/react-query";
+import { getSearch } from "@/lib/data/documents";
+
+const SearchCommand = () => {
+  const { user } = useRequireUser();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const { data: documents } = useQuery({
+    queryKey: ['search', 'documents'],
+    queryFn: async () => {
+      const response = await getSearch();
+      return response.data;
+    }
+  });
+
+  const toggle = useSearch((store) => store.toggle);
+  const isOpen = useSearch((store) => store.isOpen);
+  const onClose = useSearch((store) => store.onClose);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        toggle();
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [toggle])
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+
+  const onSelect = (id: string) => {
+    router.push(`/documents/${id}`);
+    onClose();
+  }
+
+  if (!mounted) {
+    return null;
+  }
+  
+  return (
+    <CommandDialog open={isOpen} onOpenChange={onClose}>
+      <CommandInput placeholder={`Search ${user?.name}'s Anotion... `}/>
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Documents">
+          {documents?.map((document) => (
+            <CommandItem
+              key={document.id}
+              value={`${document.id}-${document.title}`}
+              title={document.title}
+              onSelect={onSelect}
+            >
+              {document.icon ? (
+                <p className="mr-2 text-[18px]">
+                  {document.icon}
+                </p>
+              ) : (
+                <File className="size-4 mr-2" />
+              )}
+              <span>
+                {document.title}
+              </span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  )
+}
+
+export default SearchCommand;
