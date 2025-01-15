@@ -49,7 +49,7 @@ const Title = ({ initialData }: TitleProps) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setTitle(event?.target.value);
-    update.mutate({
+    update.mutateAsync({
       id: initialData.id,
       title: event.target.value || "Untitled",
     });
@@ -59,6 +59,7 @@ const Title = ({ initialData }: TitleProps) => {
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
+      event.preventDefault();
       disableInput();
     }
   }
