@@ -42,7 +42,9 @@ const Menu = ({
 
   const onArchive = () => {
     if (!documentId) return;
-    const promise = archive.mutateAsync(documentId);
+    const promise = archive.mutateAsync(documentId).then((res) => {
+      router.push("/documents")
+    });
 
     toast.promise(promise, {
       loading: "Moving to trash...",

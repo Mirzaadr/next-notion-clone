@@ -7,10 +7,12 @@ import { useRequireUser } from "@/lib/hooks/requireUser";
 import { useMutation } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const DocumentPage = () => {
   const { isLoading, user } = useRequireUser();
+  const router = useRouter();
 
   const addMutation = useMutation({
     mutationFn: (title?: string) => createDocument({ title }),
@@ -19,7 +21,9 @@ const DocumentPage = () => {
 
   const onCreate = () => {
     // create a new document: title, userId, parentId
-    const promise = addMutation.mutateAsync("Untitled");
+    const promise = addMutation.mutateAsync("Untitled").then((res) => {
+      router.push(`/documents/${res.documentId}`);
+    });
     
     toast.promise(promise, {
       loading: "Creating new note...",
