@@ -344,7 +344,39 @@ export const removeDocumentIcon = async ({ id }: { id: string }) => {
 
     const document = await db.document.update({
       where: { id },
-      data: { icon: undefined },
+      data: { icon: null },
+    });
+
+    return { success: true, data: document };
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    return { success: false, data: null };
+  }
+};
+
+export const removeDocumentCover = async ({ id }: { id: string }) => {
+  const session = await auth();
+  try {
+    if (!session || !session.user?.id) {
+      throw new Error("Unauthenticated");
+    }
+    const userId = session.user.id;
+
+    const existingDoc = await db.document.findUnique({
+      where: { id },
+    });
+
+    if (!existingDoc) {
+      throw new Error("Not Found");
+    }
+
+    if (existingDoc.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const document = await db.document.update({
+      where: { id },
+      data: { coverImage: null },
     });
 
     return { success: true, data: document };

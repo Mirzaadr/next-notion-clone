@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { removeDocumentIcon, updateDocument } from "@/lib/data/documents";
 import { queryClient } from "./providers/QueryProviders";
 import TextareaAutosize from 'react-textarea-autosize';
+import { useCoverImage } from "@/lib/hooks/useCoverImage";
 
 interface ToolbarProps {
   initialData: Document;
@@ -17,6 +18,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const inputRef = useRef<ComponentRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
+  const coverImage = useCoverImage();
 
   const update = useMutation({
     mutationFn: (args: {
@@ -73,14 +75,14 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   }
 
   const onIconSelect = (icon: string) => {
-    update.mutateAsync({
+    update.mutate({
       id: initialData.id,
       icon,
     })
   };
 
   const onIconRemove = () => {
-    removeIcon.mutateAsync({
+    removeIcon.mutate({
       id: initialData.id
     })
   }
@@ -123,7 +125,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
           </IconPicker>
         )}
         {!initialData.coverImage && !preview && (
-          <Button onClick={() => {}} className="text-muted-foreground text-xs" variant="outline" size="sm">
+          <Button onClick={() => coverImage.onOpen()} className="text-muted-foreground text-xs" variant="outline" size="sm">
             <ImageIcon className="size-4 mr-2"/>
             Add cover
           </Button>
