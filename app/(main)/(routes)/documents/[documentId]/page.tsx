@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CoverImage from "@/app/(main)/_components/CoverImage";
 import dynamic from "next/dynamic";
 import Toolbar from "@/components/Toolbar";
@@ -9,6 +9,7 @@ import { getDocumentById, updateDocument } from "@/lib/data/documents";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { queryClient } from "@/components/providers/QueryProviders";
+import { debounce } from "lodash"
 
 interface DocumentIdPageProps {
   params: Promise<{
@@ -29,7 +30,7 @@ const DocumentIdPage = ({
         documentId,
       });
       return response.data;
-    }
+    },
   });
 
   const update = useMutation({
@@ -43,14 +44,23 @@ const DocumentIdPage = ({
     ]),
   });
 
-  const onChange = (content: string) => {
+  const uploadData = useCallback((content: string) => {
     if (document) {
       update.mutate({
         id: document.id,
         content: content,
       });
     }
-  }
+  }, [document, update]);
+
+  // memoize the debounce call with useMemo
+  const debouncedUploadData = useMemo(() => {
+    return debounce(uploadData, 1000);
+  }, [uploadData]);
+
+  const onChange = (content: string) => {
+    debouncedUploadData(content);
+  };
   
   if (document === undefined) {
     return (<div>
