@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import Title from "./Title";
 import Banner from "./Banner";
 import Menu from "./Menu";
+import Publish from "./Publish";
 
 interface NavbarProps {
   isCollapsed: boolean;
@@ -45,7 +46,7 @@ const Navbar = ({
 
   return (
     <>
-      <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center gap-x-4">
+      <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 flex items-center gap-x-4">
         {isCollapsed && (
           <MenuIcon
             role="button"
@@ -53,9 +54,10 @@ const Navbar = ({
             className="size-6 text-muted-foreground"
           />
         )}
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between flex-1">
           <Title initialData={document}/>
           <div className="flex items-center gap-x-2">
+            <Publish initialData={document} />
             <Menu documentId={document.id} />
           </div>
         </div>
