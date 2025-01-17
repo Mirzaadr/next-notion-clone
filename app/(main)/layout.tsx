@@ -3,7 +3,6 @@ import Spinner from "@/components/Spinner";
 import Navigation from "./_components/Navigation";
 import { useEffect, useState } from "react";
 import { useRequireUser } from "@/lib/hooks/requireUser";
-import { ReactQueryProvider } from "@/components/providers/QueryProviders";
 import SearchCommand from "@/components/SearchCommand";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -25,13 +24,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className='h-full flex dark:bg-[#1F1F1F]'>
-      <ReactQueryProvider>
-        <Navigation />
-        <main className="flex-1 h-full overflow-y-auto">
-          <SearchCommand />
-          {children}
-        </main>
-      </ReactQueryProvider>
+      <Navigation />
+      <main className="flex-1 h-full overflow-y-auto">
+        <SearchCommand />
+        {children}
+      </main>
     </div>
   )
 }

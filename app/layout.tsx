@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import ModalProvider from "@/components/providers/ModalProvider";
+import { ReactQueryProvider } from "@/components/providers/QueryProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,9 +54,11 @@ export default async function RootLayout({
             disableTransitionOnChange
             storageKey="anotion-theme-2"
           >
-            {children}
-            <Toaster position="bottom-center"/>
-            <ModalProvider />
+            <ReactQueryProvider>
+              {children}
+              <Toaster position="bottom-center"/>
+              <ModalProvider />
+            </ReactQueryProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>
