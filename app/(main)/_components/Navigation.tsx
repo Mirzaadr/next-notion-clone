@@ -2,7 +2,7 @@
 import Spinner from "@/components/Spinner";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { ComponentRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from 'usehooks-ts';
 import UserItem from "./UserItem";
@@ -23,6 +23,7 @@ import TrashBox from "./TrashBox";
 import { useSearch } from "@/lib/hooks/useSearch";
 import { useSettings } from "@/lib/hooks/useSettings";
 import Navbar from "./Navbar";
+import { useScreenWidth } from "@/lib/hooks/useScreenWidth";
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -30,6 +31,9 @@ const Navigation = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const search = useSearch();
   const settings = useSettings();
+  const router = useRouter();
+
+  const screenWidth = useScreenWidth();
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ComponentRef<"aside">>(null);
@@ -47,7 +51,7 @@ const Navigation = () => {
     } else {
       resetWidth();
     }
-  }, [isMobile]);
+  }, [isMobile, screenWidth]);
   
   useEffect(() => {
     if (isMobile) {
@@ -76,7 +80,7 @@ const Navigation = () => {
     if (sidebarRef.current && navbarRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
       navbarRef.current.style.setProperty("left", `${newWidth}px`);
-      navbarRef.current.style.setProperty("width", `calc(100%-${newWidth}px)`);
+      navbarRef.current.style.setProperty("width", `${screenWidth - newWidth}px`);
     }
   };
   const handleMouseUp = (event: MouseEvent) => {
@@ -90,10 +94,7 @@ const Navigation = () => {
       setIsResetting(true);
 
       sidebarRef.current.style.width = isMobile ? "100%" : "240px";
-      navbarRef.current.style.setProperty(
-        "width",
-        isMobile ? "0" : "calc(100%-240px)"
-      );
+      navbarRef.current.style.setProperty("width", isMobile ? "0px" : `${screenWidth - 240}px`);
       navbarRef.current.style.setProperty(
         "left",
         isMobile ? "100%" : "240px"
@@ -108,14 +109,16 @@ const Navigation = () => {
       setIsResetting(true);
 
       sidebarRef.current.style.width = "0";
-      navbarRef.current.style.setProperty("width", "100%");
+      navbarRef.current.style.setProperty("width", `${screenWidth}px`);
       navbarRef.current.style.setProperty("left", "0");
       setTimeout(() => setIsResetting(false), 300);
     }
   };
 
   const handleCreate = () => {
-    const promise = addMutation.mutateAsync("Untitled");
+    const promise = addMutation.mutateAsync("Untitled").then((res) => {
+      router.push(`/documents/${res.documentId}`)
+    });
 
     toast.promise(promise, {
       loading: "Creating new note...",
